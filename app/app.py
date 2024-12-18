@@ -3,17 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import serial
 
-# import serial.tools.list_ports
-
-# ports = serial.tools.list_ports.comports()
-# for port in ports:
-#     print(port)
-
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500"],
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,6 +15,8 @@ app.add_middleware(
 
 class SliderValue(BaseModel):
     value: int
+
+slider = SliderValue(value=50)
 
 try:
     ser = serial.Serial(port="COM3", baudrate=9600, timeout=1) 
@@ -30,7 +26,6 @@ except Exception as e:
 
 @app.post("/send-slider")
 async def send_slider_value(slider: SliderValue):
-
     if not (0 <= slider.value <= 255):
         raise HTTPException(status_code=400, detail="Slider value must be between 0 and 255")
 
@@ -43,8 +38,18 @@ async def send_slider_value(slider: SliderValue):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to send data via UART: {e}")
 
-@app.get("/")
 
+@app.post("/update-value")
+async def update_value(sliderUpdated: SliderValue):
+    global slider
+    slider.value = sliderUpdated.value
+    return {"status": "success", "message": f"Updated volume to {slider.value}"}
+
+
+@app.get("/current-value")
+async def get_current_value():
+    return {"value": slider.value}
+
+@app.get("/")
 def root():
     return {"message": "FastAPI server for STM32 UART communication is running."}
-

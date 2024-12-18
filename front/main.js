@@ -34,13 +34,31 @@ function setBarIndicator(barId, input, styleEl, indicatorEl) {
   indicatorEl.textContent = input.value + '%';
 
   sendSliderValue(input.value);  
+
+  fetch("http://localhost:8000/update-value", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ value: parseInt(input.value, 10) }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Successfully synchronized with the server:", data);
+    })
+    .catch((error) => {
+      console.error("Error updating server value:", error);
+    });
 }
 
 function sendSliderValue(value) {
 
   let intValue = Math.round(value * 2.54);
-
-  // console.log("nty rak", intValue);
 
   fetch("http://localhost:8000/send-slider", { 
       method: "POST",
@@ -59,3 +77,23 @@ function sendSliderValue(value) {
 }
 
 initInputs();
+
+function fetchAndUpdateSlider() {
+  fetch("http://localhost:8000/current-value")
+      .then(response => response.json())
+      .then(data => {
+          const slider = document.querySelector(".bar-input");
+          if (slider) {
+              slider.value = data.value; 
+
+              console.log("value read: ", data.value);
+
+              slider.dispatchEvent(new Event("input")); 
+          }
+      })
+      .catch(error => {
+          console.error("Error fetching volume:", error);
+      });
+}
+
+setInterval(fetchAndUpdateSlider, 115); 
