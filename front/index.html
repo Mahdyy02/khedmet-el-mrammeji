@@ -7,11 +7,16 @@
         <title>Khedmet el mrammeji</title>
         <link rel="stylesheet" href="style.css">
         <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+
+        <script type="text/javascript" async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+
     </head>
 
     <body>
 
-    <h1><b>K</b>hedmet <b>E</b>L <b>M</b>rammeji</h1>    
+    <h1><b>K</b>hedmet <b>E</b>l <b>M</b>rammeji</h1>    
     
     <main class="perspective" id="third-bar">
     <section class="bar">
@@ -24,6 +29,19 @@
     <input class="bar-input" type="range" min="0" max="100" value="89" />
     </main>
     <p class="third-bar-p"></p>
+
+    <div id="formulas">
+        <h2>PWM Formulas</h2>
+        <p><b>Duty Cycle (%):</b> \( \text{Duty Cycle} = \frac{\text{ON Time}}{\text{Period}} \times 100 \)</p>
+        <p><b>ON Time (ms):</b> \( \text{ON Time} = \frac{\text{Duty Cycle} \times \text{Period}}{100} \)</p>
+        <p><b>Frequency (Hz):</b> \( \text{Frequency} = \frac{1}{\text{Period}} \)</p>
+        <h3>Numerical Examples:</h3>
+        <ul id="numerical-examples">
+            <li><b>Duty Cycle:</b> \( 89\% \)</li>
+            <li><b>ON Time:</b> \( 8.9 \, \text{ms} \, (\text{for a 10 ms period}) \)</li>
+            <li><b>Frequency:</b> 328.125 kHz (for a 255-count period at 84 MHz)</li>
+        </ul>
+    </div>
 
         
     <script src="main.js"></script>

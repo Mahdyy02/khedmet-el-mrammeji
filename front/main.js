@@ -34,6 +34,7 @@ function setBarIndicator(barId, input, styleEl, indicatorEl) {
   indicatorEl.textContent = input.value + '%';
 
   sendSliderValue(input.value);  
+  updateFormulas(input.value);
 
   fetch("http://localhost:8000/update-value", {
     method: "POST",
@@ -96,4 +97,35 @@ function fetchAndUpdateSlider() {
       });
 }
 
+function updateFormulas(value) {
+  const prescaler = 0;  // Timer prescaler 
+  const timerPeriod = 255;  // Timer period 
+  const systemClock = 84000000;  // System clock frequency (84 MHz)
+
+  // Calculate the period in seconds
+  const periodInSeconds = ((prescaler + 1) * (timerPeriod + 1))/systemClock;
+  
+  // Convert period to milliseconds
+  const periodInMs = periodInSeconds * 1000;
+
+  const dutyCycle = value; 
+  const onTime = (dutyCycle * periodInMs) / 100;  // ON Time calculation (ms)
+  const frequency = 1 / periodInSeconds;  // Frequency calculation (Hz)
+
+  // Check if periodInMs is very small (close to zero) and adjust precision
+  const periodDisplay = periodInMs.toFixed(4);  // 4 decimal places for clarity
+  const onTimeDisplay = onTime.toFixed(4);  // 4 decimal places for clarity
+  const frequencyDisplay = frequency.toFixed(2);  // 2 decimal places for frequency
+
+  const examples = document.getElementById("numerical-examples");
+  examples.innerHTML = `
+      <li><b>Duty Cycle:</b> ${dutyCycle}%</li>
+      <li><b>ON Time:</b> ${onTimeDisplay} ms (for a ${periodDisplay} ms period)</li>
+      <li><b>Frequency:</b> ${frequencyDisplay} Hz (for a ${periodDisplay} ms period)</li>
+  `;
+}
+
+
+
 setInterval(fetchAndUpdateSlider, 115); 
+updateFormulas(89);

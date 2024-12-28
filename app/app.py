@@ -16,7 +16,7 @@ app.add_middleware(
 class SliderValue(BaseModel):
     value: int
 
-slider = SliderValue(value=50)
+slider = SliderValue(value=89)
 
 try:
     ser = serial.Serial(port="COM3", baudrate=9600, timeout=1) 
